@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: freightflow-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    plan: free
+    envVars:
+      - key: PORT
+        value: 4001
+      - key: OPTIMIZER_URL
+        value: http://freightflow-engine:5000
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+
+  - type: pserv
+    name: freightflow-engine
+    runtime: docker
+    dockerfilePath: engine/Dockerfile
+    dockerContext: .
+    plan: starter
+
+  - type: static
+    name: freightflow-frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_API_URL
+        sync: false
