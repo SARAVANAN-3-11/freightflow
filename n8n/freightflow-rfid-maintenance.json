@@ -30,7 +30,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { rfidTag: ($json.body?.rfidTag ?? $json.rfidTag), gate: ($json.body?.gate ?? $json.gate ?? 'service'), readerId: ($json.body?.readerId ?? $json.readerId ?? 'n8n-rfid-reader') } }}",
+        "jsonBody": "={{ { rfidTag: ($json.body?.rfidTag ?? $json.rfidTag), gate: ($json.body?.gate ?? $json.gate ?? 'service'), readerId: ($json.body?.readerId ?? $json.readerId ?? 'n8n-rfid-reader'), status: ($json.body?.status ?? $json.status ?? (($json.body?.gate ?? $json.gate) === 'main' ? 'AVAILABLE' : 'MAINTENANCE')) } }}",
         "options": {}
       },
       "id": "mark-maintenance",
