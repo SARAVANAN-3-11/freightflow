@@ -5,6 +5,7 @@ const navigation = [
   { id: "fleet", label: "Fleet live view", icon: "truck" },
   { id: "shipments", label: "Shipments", icon: "package" },
   { id: "optimization", label: "Load optimizer", icon: "route" },
+  { id: "rfid", label: "RFID automation", icon: "target" },
 ];
 
 export default function Layout({

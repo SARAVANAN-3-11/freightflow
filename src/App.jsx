@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Fleet from "./pages/Fleet";
 import Optimization from "./pages/Optimization";
 import Shipments from "./pages/Shipments";
+import RfidSimulator from "./pages/RfidSimulator";
 
 function LoadingScreen() {
   return (
@@ -62,6 +63,7 @@ export default function App() {
     fleet: <Fleet data={data} onAddLorry={() => setAddingLorry(true)} />,
     shipments: <Shipments {...common} onAddShipment={() => setAddingShipment(true)} />,
     optimization: <Optimization data={data} />,
+    rfid: <RfidSimulator data={data} />,
   };
   if (data.loading) return <LoadingScreen />;
   return (

@@ -50,6 +50,81 @@ select:focus-visible {
   display: block;
   flex: none;
 }
+.rfid-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, .6fr);
+  gap: 16px;
+}
+.rfid-panel,
+.rfid-flow-panel {
+  padding: 20px;
+}
+.rfid-panel .panel-head {
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.rfid-chip {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--blue);
+  background: var(--blue-pale);
+  border-radius: 8px;
+}
+.rfid-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding-top: 18px;
+}
+.rfid-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+.rfid-form input,
+.rfid-form select {
+  min-height: 38px;
+  padding: 0 10px;
+  color: var(--ink);
+  background: #fbfcfe;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.rfid-wide,
+.rfid-form > button {
+  grid-column: 1 / -1;
+}
+.rfid-result {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  padding: 11px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.rfid-result.success { color: #167b5b; background: var(--green-pale); }
+.rfid-result.failure { color: #a94747; background: var(--red-pale); }
+.rfid-flow-panel .eyebrow { margin: 0 0 18px; }
+.rfid-flow-step {
+  display: flex;
+  gap: 11px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rfid-flow-step:last-child { border-bottom: 0; }
+.rfid-flow-step > b {
+  color: var(--blue);
+  font-size: 10px;
+}
+.rfid-flow-step span { display: grid; gap: 3px; }
+.rfid-flow-step strong { color: var(--ink); font-size: 11px; }
+.rfid-flow-step small { color: var(--muted); font-size: 10px; }
 
 /* Application shell */
 .app-shell {
