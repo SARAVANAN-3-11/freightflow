@@ -1871,6 +1871,38 @@ select:focus-visible {
   color: #8d98a9;
   font-size: 8.5px;
 }
+.rejected-routes {
+  margin: 0 19px 18px;
+  padding: 12px;
+  background: #fff8ed;
+  border: 1px solid #f3d7a6;
+  border-radius: 8px;
+}
+.rejected-routes-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #a66a13;
+  font-size: 10px;
+  margin-bottom: 8px;
+}
+.rejected-route {
+  display: grid;
+  gap: 3px;
+  padding-top: 7px;
+  border-top: 1px solid #f4e1c1;
+}
+.rejected-route + .rejected-route {
+  margin-top: 7px;
+}
+.rejected-route b {
+  color: #76501d;
+  font-size: 9.5px;
+}
+.rejected-route span {
+  color: #9b7a4a;
+  font-size: 9px;
+}
 .approve-button {
   border: 1px solid #cad6fd;
   background: #f7f8ff;

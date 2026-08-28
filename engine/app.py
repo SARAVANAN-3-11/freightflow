@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
+from datetime import datetime, timezone
 
 app = Flask(__name__)
 
@@ -34,6 +35,23 @@ def validate_shipments(lorries, shipments):
         volume = float(shipment["volume"])
         if not any(weight <= capacity[0] and volume <= capacity[1] for capacity in capacities.values()):
             rejected.append({"shipmentId": shipment["id"], "reason": "No lorry satisfies weight and volume capacity"})
+            continue
+        origin = coordinates(shipment, "origin") or coordinates(shipment, "pickup")
+        destination = coordinates(shipment, "destination")
+        deadline = shipment.get("deadline") or shipment.get("delivery_deadline")
+        if origin and destination and deadline:
+            deadline_text = str(deadline).replace("Z", "+00:00")
+            due_at = datetime.fromisoformat(deadline_text)
+            if due_at.tzinfo is None:
+                due_at = due_at.replace(tzinfo=timezone.utc)
+            remaining_hours = (due_at - datetime.now(timezone.utc)).total_seconds() / 3600
+            route_distance = distance_km(origin, destination)
+            estimated_hours = route_distance / 45 + 1
+            if remaining_hours < estimated_hours:
+                rejected.append({
+                    "shipmentId": shipment["id"],
+                    "reason": f"Delivery deadline is too short for the {route_distance} km route (estimated {round(estimated_hours, 1)} hours)",
+                })
     return rejected
 
 

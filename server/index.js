@@ -257,6 +257,28 @@ app.post("/api/hardware/rfid", async (request, response, next) => {
 	} catch (error) { next(error); }
 });
 
+app.post("/api/automation/rfid-maintenance", async (request, response, next) => {
+	try {
+		const { rfidTag, gate = "service", readerId = "n8n-rfid-reader" } = request.body || {};
+		if (!rfidTag) return response.status(400).json({ error: "rfidTag is required" });
+		const { data: lorry, error: lorryError } = await supabase.from("lorries").select("id, lorry_code, rfid_tag").eq("rfid_tag", rfidTag).single();
+		if (lorryError) throw lorryError;
+		const timestamp = new Date().toISOString();
+		let { data: updated, error } = await supabase.from("lorries").update({ status: "MAINTENANCE", driver_status: "MAINTENANCE", updated_at: timestamp, last_updated: timestamp }).eq("id", lorry.id).select().single();
+		if (error) ({ data: updated, error } = await supabase.from("lorries").update({ driver_status: "MAINTENANCE", last_updated: timestamp }).eq("id", lorry.id).select().single());
+		if (error) throw error;
+		const event = { lorry_id: lorry.id, rfid_tag: rfidTag, gate, status: "MAINTENANCE", reader_id: readerId, scanned_at: timestamp };
+		let { error: eventError } = await supabase.from("rfid_events").insert(event);
+		if (eventError) {
+			({ error: eventError } = await supabase.from("rfid_events").insert({ lorry_id: lorry.id, rfid_tag: rfidTag, gate, status: "MAINTENANCE", scanned_at: timestamp }));
+		}
+		if (eventError) throw eventError;
+		const result = { type: "rfid:scan", lorryId: lorry.lorry_code, rfidTag, gate, readerId, status: "MAINTENANCE", scannedAt: timestamp };
+		io.emit("rfid:scan", result);
+		response.json({ message: "RFID automation completed", lorry: presentLorry(updated), event: result });
+	} catch (error) { next(error); }
+});
+
 async function proxyOptimization(request, response, next) {
 	try {
 		const engineResponse = await fetch(`${optimizerUrl}/optimize`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(request.body || {}) });

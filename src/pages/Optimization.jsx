@@ -211,6 +211,21 @@ export default function Optimization({ data }) {
               </div>
             );
           })}
+
+          {(optimization.rejected || []).length > 0 && (
+            <div className="rejected-routes" role="status">
+              <div className="rejected-routes-head">
+                <Icon name="info" size={16} />
+                <b>Rejected shipments</b>
+              </div>
+              {optimization.rejected.map((item) => (
+                <div className="rejected-route" key={item.shipmentId}>
+                  <b>{findShipment(item.shipmentId)?.title || item.shipmentId}</b>
+                  <span>{item.reason}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </article>
 
         <aside className="panel constraint-panel">

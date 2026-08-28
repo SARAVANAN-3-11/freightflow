@@ -49,6 +49,8 @@ create table if not exists public.rfid_events (
   scanned_at timestamptz not null default now()
 );
 
+alter table public.rfid_events add column if not exists reader_id text;
+
 create table if not exists public.optimization_runs (
   id uuid primary key default gen_random_uuid(),
   score numeric,

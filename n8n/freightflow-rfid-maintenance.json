@@ -1,0 +1,71 @@
+{
+  "name": "FreightFlow RFID -> Maintenance",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "freightflow-rfid-maintenance",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "rfid-webhook",
+      "name": "RFID Reader Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300],
+      "webhookId": "freightflow-rfid-maintenance"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.FREIGHTFLOW_API_URL}}/api/automation/rfid-maintenance",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { rfidTag: $json.body.rfidTag || $json.rfidTag, gate: $json.body.gate || $json.gate || 'service', readerId: $json.body.readerId || $json.readerId || 'n8n-rfid-reader' } }}",
+        "options": {}
+      },
+      "id": "mark-maintenance",
+      "name": "Mark Lorry Maintenance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "firstIncomingItem",
+        "options": {}
+      },
+      "id": "respond-rfid",
+      "name": "Return Automation Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [780, 300]
+    }
+  ],
+  "connections": {
+    "RFID Reader Webhook": {
+      "main": [[{"node": "Mark Lorry Maintenance", "type": "main", "index": 0}]]
+    },
+    "Mark Lorry Maintenance": {
+      "main": [[{"node": "Return Automation Result", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "freightflow-rfid-maintenance-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
