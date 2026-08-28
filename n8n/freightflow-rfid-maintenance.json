@@ -18,7 +18,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{$env.FREIGHTFLOW_API_URL}}/api/automation/rfid-maintenance",
+        "url": "http://localhost:4001/api/automation/rfid-maintenance",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -30,7 +30,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { rfidTag: $json.body.rfidTag || $json.rfidTag, gate: $json.body.gate || $json.gate || 'service', readerId: $json.body.readerId || $json.readerId || 'n8n-rfid-reader' } }}",
+        "jsonBody": "={{ { rfidTag: ($json.body?.rfidTag ?? $json.rfidTag), gate: ($json.body?.gate ?? $json.gate ?? 'service'), readerId: ($json.body?.readerId ?? $json.readerId ?? 'n8n-rfid-reader') } }}",
         "options": {}
       },
       "id": "mark-maintenance",
@@ -41,7 +41,8 @@
     },
     {
       "parameters": {
-        "respondWith": "firstIncomingItem",
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
         "options": {}
       },
       "id": "respond-rfid",

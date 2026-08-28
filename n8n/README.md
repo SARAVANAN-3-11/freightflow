@@ -2,11 +2,13 @@
 
 Import `freightflow-rfid-maintenance.json` into n8n.
 
-Set this environment variable in n8n:
+For local n8n, the imported workflow already calls the local API:
 
 ```env
 FREIGHTFLOW_API_URL=http://localhost:4001
 ```
+
+The HTTP Request node uses `http://localhost:4001/api/automation/rfid-maintenance` directly for local development.
 
 For a deployed API, use its public HTTPS URL instead:
 
