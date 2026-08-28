@@ -246,8 +246,10 @@ app.post("/api/telemetry", async (request, response, next) => {
 app.post("/api/hardware/rfid", async (request, response, next) => {
 	try {
 		const { rfidTag, gate } = request.body || {};
-		const { data: lorry, error: lorryError } = await supabase.from("lorries").select("id, lorry_code, status").eq("rfid_tag", rfidTag).single();
+		const { data: lorriesByTag, error: lorryError } = await supabase.from("lorries").select("id, lorry_code, status").eq("rfid_tag", String(rfidTag || "").trim()).limit(1);
 		if (lorryError) throw lorryError;
+		const lorry = lorriesByTag?.[0];
+		if (!lorry) return response.status(404).json({ error: `No lorry found for RFID tag: ${rfidTag}` });
 		const nextStatus = gate === "service" ? "MAINTENANCE" : lorry.status === "IN_TRANSIT" ? "AVAILABLE" : "IN_TRANSIT";
 		const { error } = await supabase.from("lorries").update({ status: nextStatus, updated_at: new Date().toISOString() }).eq("id", lorry.id);
 		if (error) throw error;
@@ -261,8 +263,10 @@ app.post("/api/automation/rfid-maintenance", async (request, response, next) => 
 	try {
 		const { rfidTag, gate = "service", readerId = "n8n-rfid-reader" } = request.body || {};
 		if (!rfidTag) return response.status(400).json({ error: "rfidTag is required" });
-		const { data: lorry, error: lorryError } = await supabase.from("lorries").select("id, lorry_code, rfid_tag").eq("rfid_tag", rfidTag).single();
+		const { data: lorriesByTag, error: lorryError } = await supabase.from("lorries").select("id, lorry_code, rfid_tag").eq("rfid_tag", String(rfidTag).trim()).limit(1);
 		if (lorryError) throw lorryError;
+		const lorry = lorriesByTag?.[0];
+		if (!lorry) return response.status(404).json({ error: `No lorry found for RFID tag: ${rfidTag}` });
 		const timestamp = new Date().toISOString();
 		let { data: updated, error } = await supabase.from("lorries").update({ status: "MAINTENANCE", driver_status: "MAINTENANCE", updated_at: timestamp, last_updated: timestamp }).eq("id", lorry.id).select().single();
 		if (error) ({ data: updated, error } = await supabase.from("lorries").update({ driver_status: "MAINTENANCE", last_updated: timestamp }).eq("id", lorry.id).select().single());
